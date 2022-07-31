@@ -1,0 +1,41 @@
+@import './reset';
+@import './variables';
+@import './mixins';
+@import './layout';
+@import './button';
+@import './quiz';
+@import './timer';
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;700&display=swap');
+
+html, body {
+    font-family: 'Noto Sans KR', sans-serif; font-weight: 400; line-height: 1.4;
+    color: $color-black-500;
+}
+
+.screen-result {
+    .score {
+        font-size: 28px; font-weight: 700;
+
+        .correct {
+            margin-right: 10px;
+            font-size: 40px; color: $color-primary-500;
+        }
+    }
+
+    .timer {
+        position: relative; top: auto; right: auto; transform: none;
+        margin-top: $margin-content/2;
+        span { vertical-align: text-top; }
+    }
+
+    .buttons {
+        width: 100%;
+        margin-top: $margin-content;
+        @include mobile { margin-top: $margin-content-mobile; }
+
+        .btn { 
+            display: inline-block; margin: 0 5px;
+        }
+    }
+}

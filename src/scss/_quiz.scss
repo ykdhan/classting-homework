@@ -1,0 +1,43 @@
+.quiz {
+    display: block; width: 100%;
+
+    .question { 
+        font-size: 22px; color: $color-black-700;
+        margin-bottom: $margin-content; padding-right: 60px;
+        @include mobile { margin-bottom: $margin-content-mobile; padding-right: 20px; }
+    }
+
+    .options {
+        li {
+            position: relative;
+
+            + li {
+                margin-top: 16px;
+            }
+        }
+
+        input[type='radio'] {
+            position: absolute; opacity: 0;
+
+            &:checked + label, &:focus + label {
+                border-color: $color-primary-500;
+                color: $color-primary-500;
+            }
+        }
+
+        label {
+            display: block;
+            box-sizing: border-box;
+            padding: 18px 26px;
+            font-size: 16px;
+            border: 1px solid $color-gray-700; border-radius: $border-radius;
+            transition: color 0.3s ease-out, border-color 0.3s ease-out;
+            cursor: pointer;
+
+            &:hover {
+                border-color: $color-black-500;
+                color: $color-black-700;
+            }
+        }
+    }
+}
