@@ -51,6 +51,7 @@ export const PageQuiz = function (props: PageQuizProps) {
                 })
                 .catch(() => {
                     console.log('API ERROR');
+                    alert('API ERROR');
                 })
         }
     }, [max, _question, _setQuestion, _setLayer, _setTime]);
