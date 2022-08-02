@@ -3,22 +3,29 @@ import { NavLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import axios from 'axios';
 
-import { Button, Layout } from '../ui';
-import { Quiz } from '../quiz';
-import { Timer } from '../timer';
-import { QuizProps } from '../quiz';
-import { ScreenQuizProps, DataType } from './types';
-import { questionState, answerState, stageState, timerState } from '../../recoil/states';
+import { Button, Layout } from '../../ui';
+import { Quiz } from '../../quiz';
+import { Timer } from '../../timer';
+import { QuizProps } from '../../quiz';
+import { PageQuizProps, DataType } from './types';
+import { questionState, answerState, stageState, timeRecordState } from '../../../recoil/states';
 
-export const ScreenQuiz = function (props: ScreenQuizProps) {
+const decodeHTML = (html: string) => {
+    var textarea = document.createElement('textarea');
+    textarea.innerHTML = html;
+    return textarea.value;
+}
+
+export const PageQuiz = function (props: PageQuizProps) {
     const { max = 10 } = props;
-    const [ _loading, _setLoading ] = useState(true);
+    const [ _layer, _setLayer ] = useState({ type: 'loading', on: true, correct: false });
+    const [ _time, _setTime ] = useRecoilState<number>(timeRecordState);
     const [ _stage, _setStage ] = useRecoilState<number>(stageState);
-    const [ _timer, _setTimer ] = useRecoilState<number>(timerState);
     const [ _question, _setQuestion ] = useRecoilState<QuizProps[]>(questionState);
     const [ _answer, _setAnswer ] = useRecoilState<string[]>(answerState);
 
     useEffect(() => {
+        // first load
         if (!_question.length) {
             axios
                 .get(`https://opentdb.com/api.php?amount=${max}&type=multiple`)
@@ -34,33 +41,43 @@ export const ScreenQuiz = function (props: ScreenQuizProps) {
                             incorrect_answers.forEach(ans => {
                                 options.push(decodeHTML(ans));
                             });
+                            options.sort(() => Math.random() - 0.5);
                             list.push({ question, answer, options });
                         });
+                        _setTime(new Date().getTime());
                         _setQuestion(list);
+                        _setLayer({ type: 'loading', on: false, correct: false });
                     }
                 })
-                .finally(() => _setLoading(false));
-        } else {
-            _setStage(1);
-            _setTimer(0);
-            _setLoading(false);
+                .catch(() => {
+                    console.log('API ERROR');
+                })
         }
-    }, [max, _question, _setQuestion, _setLoading, _setStage, _setTimer]);
+    }, [max, _question, _setQuestion, _setLayer, _setTime]);
 
-    const decodeHTML = (html: string) => {
-        var textarea = document.createElement('textarea');
-        textarea.innerHTML = html;
-        return textarea.value;
-    }
+    useEffect(() => {
+        // quiz again
+        if (_question.length) {
+            _setStage(1);
+            _setAnswer([]);
+            _setTime(new Date().getTime());
+            _setLayer({ type: 'loading', on: false, correct: false });
+        }
+    }, [_question, _setStage, _setTime, _setLayer, _setAnswer]);
 
     const handleButton = () => {
-        _stage !== max && _setStage(_stage + 1);
+        const correct = (_question[_stage - 1].answer === _answer[_stage - 1 ]);
+        _setLayer({ type: 'result', on: true, correct: correct });
+        setTimeout(() => {
+            _setLayer({ type: 'result', on: false, correct: correct });
+            _setStage(_stage + 1);
+        }, 700);
     }
 
     return (
-        <Layout className='screen-quiz' loading={_loading}>
+        <Layout className='screen-quiz' layer={_layer}>
             <h1 className="title">
-                {_stage}.
+                {_stage}. 
                 <Timer />
             </h1>
             {
@@ -74,9 +91,9 @@ export const ScreenQuiz = function (props: ScreenQuizProps) {
                         answer={_question[_stage - 1].answer}
                         options={_question[_stage - 1].options}
                     />
-                    { _stage === max
-                        ? <NavLink to="/result" state={{time: _timer}} className="btn block filled">결과 보기</NavLink>
-                        : <Button block filled onClick={handleButton} disabled={_answer.length < _stage}>다음 문항</Button> 
+                    { _answer.length >= _stage && (_stage === max
+                        ? <NavLink to="/result" className="btn block filled">결과 보기</NavLink>
+                        : <Button block filled onClick={handleButton}>다음 문항</Button>)
                     }
                 </>)
             }

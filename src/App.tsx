@@ -1,19 +1,17 @@
-import React from 'react';
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import { ScreenHome } from './component/screenHome';
-import { ScreenQuiz } from './component/screenQuiz';
-import { ScreenResult } from './component/screenResult';
+import { PageHome } from './component/pages/home';
+import { PageQuiz } from './component/pages/quiz';
+import { PageResult } from './component/pages/result';
 
 function App() {
   return (
     <div className="app">
       <Router>
         <Routes>
-          <Route path="/" element={<ScreenHome/>}></Route>
-          <Route path="/quiz" element={<ScreenQuiz/>}></Route>
-          <Route path="/result" element={<ScreenResult/>}></Route>
+          <Route path="/" element={<PageHome/>}></Route>
+          <Route path="/quiz" element={<PageQuiz/>}></Route>
+          <Route path="/result" element={<PageResult/>}></Route>
         </Routes>
       </Router>
     </div>

@@ -1,23 +1,21 @@
 import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { answerState, questionState, stageState, timerState } from '../../recoil/states';
-import { QuizProps } from '../quiz';
+import { answerState, questionState, stageState } from '../../../recoil/states';
+import { QuizProps } from '../../quiz';
 
-import { Layout } from '../ui';
+import { Layout } from '../../ui';
 
-export const ScreenHome = function () {
+export const PageHome = function () {
     const [ _stage, _setStage ] = useRecoilState<number>(stageState);
-    const [ _timer, _setTimer ] = useRecoilState(timerState);
     const [ _question, _setQuestion ] = useRecoilState<QuizProps[]>(questionState);
     const [ _answer, _setAnswer ] = useRecoilState<string[]>(answerState);
 
     useEffect(() => {
         _setStage(1);
-        _setTimer(0);
         _setQuestion([]);
         _setAnswer([]);
-    }, [_setStage, _setTimer, _setQuestion, _setAnswer]);
+    }, [_setStage, _setQuestion, _setAnswer]);
 
     return (
         <Layout className='screen-home' center={true}>

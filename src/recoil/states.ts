@@ -1,6 +1,11 @@
 import { atom } from 'recoil';
 import { QuizProps } from '../component/quiz';
 
+export const timeRecordState = atom<number>({
+    key: 'timeRecordState',
+    default: new Date().getTime()
+});
+
 export const timerState = atom<number>({
     key: 'timerState',
     default: 0
